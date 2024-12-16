@@ -1,0 +1,138 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Team</a>
+        <div class="d-flex">
+
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <table class="table" id="teamTable">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Profile</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Foundation</th>
+                    <th scope="col">User</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="teams !== undefined">
+                <tr *ngFor="let team of teams">
+                    <td>{{team.id}}</td>
+                    <td><img src="{{team.profile}}" class="img-profile" alt="..."></td>
+                    <td>{{team.name}}</td>
+                    <td>{{team.foundation}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#readUserModal" (click)="setReadUser(team.userId)"><i
+                                    class="bi bi-search"></i></button>
+                        </div>
+                    </td>
+                    <td>{{team.status ? "Active": "Deactive"}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#updateTeamModal" (click)="setUpdateTeam(team)"><i
+                                    class="bi bi-pencil"></i></button>
+                            <button *ngIf="team.id !== undefined" type="button" class="btn btn-outline-secondary"
+                                (click)="deleteTeam(team.id)"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal update team-->
+<div class="modal fade" id="updateTeamModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form class="w-100" #updateTeamForm="ngForm">
+                    <div class="mb-3">
+                        <h2>Update team</h2>
+                    </div>
+
+                    <div class="mb-3">
+                        <img src="{{teamUpdate.profile}}" class="img-profile" alt="...">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputProfile" class="form-label">Profile</label>
+                        <input type="file" class="form-control" id="inputProfile" aria-describedby="profileHelp"
+                            (change)="onFileSelected($event)">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="exampleInputName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="exampleInputName" aria-describedby="nameHelp"
+                            [(ngModel)]="teamUpdate.name" #nameUpdate="ngModel" name="nameUpdate" required>
+
+                        <div *ngIf="nameUpdate.invalid && (nameUpdate.dirty || nameUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="nameUpdate.errors?.['required']">
+                                Name is requerido.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="exampleInputFoundation" class="form-label">Foundation</label>
+                        <input type="date" class="form-control" id="exampleInputFoundation"
+                            aria-describedby="foundationHelp" [(ngModel)]="teamUpdate.foundation"
+                            #foundationUpdate="ngModel" name="foundationUpdate" required
+                            max="{{date | date: 'yyyy-MM-dd'}}">
+
+                        <div *ngIf="foundationUpdate.invalid && (foundationUpdate.dirty || foundationUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="foundationUpdate.errors?.['required']">
+                                Fundacion is requerido.
+                            </div>
+                            <div *ngIf="foundationUpdate.errors?.['max']">
+                                Foundation date can not be greater than today.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary col-12 btn-update-team" (click)="updateTeam()"
+                        [disabled]="updateTeamForm.invalid" data-bs-dismiss="modal">Actualizar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show user-->
+<div class="modal fade" id="readUserModal" tabindex="-1" aria-labelledby="readUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <ul *ngIf="user !== undefined" class="list-group list-group-flush">
+                        <li class="list-group-item">Username: {{user.username}}</li>
+                        <li class="list-group-item">Email: {{user.email}}</li>
+                        <li class="list-group-item">Status: {{user.status ? "Active" : "Deactive"}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

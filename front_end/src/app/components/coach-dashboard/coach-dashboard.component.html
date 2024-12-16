@@ -1,0 +1,39 @@
+<div class="container-fluid vh-100 vw-100 p-0">
+    <div class="row h-100 w-100 m-0">
+        <div class="col-2 p-0 side-menu">
+
+            <div class="side-menu-logo">
+                Game Validator
+            </div>
+
+            <div>
+                <p class="side-menu-header">COACH DASHBOARD</p>
+                <p class="side-menu-header">Username: {{username}}</p>
+
+                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="coachtournament"
+                        routerLinkActive="active"><i class="bi bi-pencil"></i> Tournament</a></li>
+                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="coachteam"
+                        routerLinkActive="active"><i class="bi bi-filter-square"></i> Team</a></li>
+                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="coachplayer"
+                        routerLinkActive="active"><i class="bi bi-people"></i> Players</a></li>
+                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="coachgame"
+                        routerLinkActive="active"><i class="bi bi-calendar"></i> Games</a>
+                </li>
+                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="coachdss"
+                        routerLinkActive="active"><i class="bi bi-bar-chart"></i> DSS</a>
+                </li>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-secondary" (click)="selectLogout()"><i
+                        class="bi bi-box-arrow-left"></i>
+                    Logout</button>
+            </div>
+
+
+        </div>
+        <div class="col-10 p-0">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

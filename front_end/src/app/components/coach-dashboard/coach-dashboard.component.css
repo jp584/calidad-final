@@ -1,0 +1,25 @@
+.side-menu {
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+.side-menu-logo {
+    padding: 10px 15px 10px 30px;
+    font-size: 20px;
+    background-color: #748082;
+}
+
+.side-menu-header {
+    font-size: 12px;
+    text-transform: uppercase;
+    background-color: #151515;
+    padding: 10px 15px 10px 30px;
+}
+
+.side-menu-item {
+    list-style-type: none;
+}
+
+.side-menu-link {
+    color: #fff;
+}

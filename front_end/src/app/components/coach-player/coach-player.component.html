@@ -1,0 +1,246 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Player</a>
+        <div class="d-flex">
+            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#createPlayerModal">Add
+                Player</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <table class="table" id="teamTable">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Profile</th>
+                <th scope="col">Name</th>
+                <th scope="col">Ci</th>
+                <th scope="col">Birthdate</th>
+                <th scope="col">Position id</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="players !== undefined">
+            <tr *ngFor="let player of players">
+                <td>{{player.id}}</td>
+                <td><img src="{{player.profile}}" class="img-profile" alt="..."></td>
+                <td>{{player.name}}</td>
+                <td>{{player.ci}}</td>
+                <td>{{player.birthdate}}</td>
+                <td>{{getPosition(player.positionId)}}</td>
+                <td>{{player.status ? "Active": "Suspended"}}</td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#updatePlayerModal" (click)="setUpdatePlayer(player)"><i
+                                class="bi bi-pencil"></i></button>
+                        <button *ngIf="player.id !== undefined" type="button" class="btn btn-outline-secondary"
+                            (click)="deletePlayer(player.id)"><i class="bi bi-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal create player -->
+<div class="modal fade" id="createPlayerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form class="w-100" #createPlayerForm="ngForm">
+                    <div class="mb-3">
+                        <label for="inputProfile" class="form-label">Profile</label>
+                        <input type="file" class="form-control" id="inputProfile" aria-describedby="profileHelp"
+                            (change)="onFileSelected($event)">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp"
+                            [(ngModel)]="playerCreate.name" #name="ngModel" name="name" required>
+
+                        <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="name.errors?.['required']">
+                                Name is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputCi" class="form-label">Ci</label>
+                        <input type="text" class="form-control" id="inputCi" aria-describedby="ciHelp"
+                            [(ngModel)]="playerCreate.ci" #ci="ngModel" name="ci" required>
+
+                        <div *ngIf="ci.invalid && (ci.dirty || ci.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="ci.errors?.['required']">
+                                Ci is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputBirthdate" class="form-label">Birthdate</label>
+                        <input type="date" class="form-control" id="inputBirthdate" aria-describedby="birthdayHelp"
+                            [(ngModel)]="playerCreate.birthdate" #birthdate="ngModel" name="birthdate" required
+                            max="{{date | date: 'yyyy-MM-dd'}}">
+
+                        <div *ngIf="birthdate.invalid && (birthdate.dirty || birthdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="birthdate.errors?.['required']">
+                                Birthdate is requerido.
+                            </div>
+                            <div *ngIf="birthdate.errors?.['max']">
+                                Birthdate date can not be greater than today.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <select class="form-select" aria-label="Default select example"
+                            [(ngModel)]="playerCreate.positionId" #positionId="ngModel" name="positionId" required>
+                            <option selected>Select Position</option>
+                            <option *ngFor="let position of positions" value="{{position.id}}">{{position.name}}
+                            </option>
+                        </select>
+
+                        <div *ngIf="positionId.invalid && (positionId.dirty || positionId.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="positionId.errors?.['required']">
+                                Position is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <select class="form-select" aria-label="Default select example"
+                            [(ngModel)]="playerCreate.teamId" #teamId="ngModel" name="teamId" required>
+                            <option selected>Select Team</option>
+                            <option *ngFor="let team of teams" value="{{team.id}}">{{team.name}}</option>
+                        </select>
+
+                        <div *ngIf="teamId.invalid && (teamId.dirty || teamId.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="teamId.errors?.['required']">
+                                Team is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary col-12 btn-update-team" (click)="createPlayer()"
+                        [disabled]="createPlayerForm.invalid" data-bs-dismiss="modal">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal update player -->
+<div class="modal fade" id="updatePlayerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form class="w-100" #updatePlayerForm="ngForm">
+                    <div class="mb-3">
+                        <img src="{{playerUpdate.profile}}" class="img-profile" alt="...">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputProfile" class="form-label">Profile</label>
+                        <input type="file" class="form-control" id="inputProfile" aria-describedby="profileHelp"
+                            (change)="onFileSelected($event)">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp"
+                            [(ngModel)]="playerUpdate.name" #nameUpdate="ngModel" name="nameUpdate" required>
+
+                        <div *ngIf="nameUpdate.invalid && (nameUpdate.dirty || nameUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="nameUpdate.errors?.['required']">
+                                Name is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputCi" class="form-label">Ci</label>
+                        <input type="text" class="form-control" id="inputCi" aria-describedby="ciHelp"
+                            [(ngModel)]="playerUpdate.ci" #ciUpdate="ngModel" name="ciUpdate" required>
+
+                        <div *ngIf="ciUpdate.invalid && (ciUpdate.dirty || ciUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="ciUpdate.errors?.['required']">
+                                Ci is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputBirthdate" class="form-label">Birthdate</label>
+                        <input type="date" class="form-control" id="inputBirthdate" aria-describedby="birthdayHelp"
+                            [(ngModel)]="playerUpdate.birthdate" #birthdateUpdate="ngModel" name="birthdateUpdate"
+                            required max="{{date | date: 'yyyy-MM-dd'}}">
+
+                        <div *ngIf="birthdateUpdate.invalid && (birthdateUpdate.dirty || birthdateUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="birthdateUpdate.errors?.['required']">
+                                Birthdate is requerido.
+                            </div>
+                            <div *ngIf="birthdateUpdate.errors?.['max']">
+                                Birthdate date can not be greater than today.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <select class="form-select" aria-label="Default select example"
+                            [(ngModel)]="playerUpdate.positionId" #positionIdUpdate="ngModel" name="positionIdUpdate"
+                            required>
+                            <option selected>Select Position</option>
+                            <option *ngFor="let position of positions" value="{{position.id}}">{{position.name}}
+                            </option>
+                        </select>
+
+                        <div *ngIf="positionIdUpdate.invalid && (positionIdUpdate.dirty || positionIdUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="positionIdUpdate.errors?.['required']">
+                                Position is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <select class="form-select" aria-label="Default select example"
+                            [(ngModel)]="playerUpdate.teamId" #teamIdUpdate="ngModel" name="teamIdUpdate" required>
+                            <option selected>Select Team</option>
+                            <option *ngFor="let team of teams" value="{{team.id}}">{{team.name}}</option>
+                        </select>
+
+                        <div *ngIf="teamIdUpdate.invalid && (teamIdUpdate.dirty || teamIdUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="teamIdUpdate.errors?.['required']">
+                                Team is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary col-12 btn-update-team" (click)="updatePlayer()"
+                        [disabled]="updatePlayerForm.invalid" data-bs-dismiss="modal">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

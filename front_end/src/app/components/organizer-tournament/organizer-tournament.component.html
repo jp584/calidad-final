@@ -1,0 +1,246 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Tournament</a>
+        <div class="d-flex">
+            <button class="btn btn-success" type="button" data-bs-toggle="modal"
+                data-bs-target="#createTournamentModal">Add
+                Tournament</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <table class="table table-hover" id="tournamentTable">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Number</th>
+                <th scope="col">Round</th>
+                <th scope="col">Start</th>
+                <th scope="col">Finish</th>
+                <th scope="col">State</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="tournaments !== undefined">
+            <tr *ngFor="let tournament of tournaments">
+                <td>{{tournament.id}}</td>
+                <td>{{tournament.name}}</td>
+                <td>{{tournament.number}}</td>
+                <td>{{tournament.round}}</td>
+                <td>{{tournament.start}}</td>
+                <td>{{tournament.finish}}</td>
+                <td>{{tournament.status ? "Active": "Deactive"}}</td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#updateTournamentModal" (click)="setUpdateTournament(tournament)"><i
+                                class="bi bi-pencil"></i></button>
+                        <button *ngIf="tournament.id !== undefined" type="button" class="btn btn-outline-secondary"
+                            (click)="deleteTournament(tournament.id)"><i class="bi bi-trash"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#showTournamentTeamsModal" (click)="showTournamentTeams(tournament)"><i
+                                class="bi bi-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal create tournament -->
+<div class="modal fade" id="createTournamentModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form class="w-100" #createTournamentForm="ngForm">
+                    <div class="mb-3">
+                        <h2>Add Tournament</h2>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp"
+                            [(ngModel)]="tournamentCreate.name" #name="ngModel" name="name" required>
+
+                        <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="name.errors?.['required']">
+                                Name is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputNumber" class="form-label">Number</label>
+                        <input type="number" class="form-control" id="inputNumber" aria-describedby="numberHelp"
+                            [(ngModel)]="tournamentCreate.number" #number="ngModel" name="number" required>
+
+                        <div *ngIf="number.invalid && (number.dirty || number.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="number.errors?.['required']">
+                                Number is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputStart" class="form-label">Start</label>
+                        <input type="date" class="form-control" id="inputStart" aria-describedby="startHelp"
+                            [(ngModel)]="tournamentCreate.start" #start="ngModel" name="start" required
+                            min="{{date | date: 'yyyy-MM-dd'}}">
+
+                        <div *ngIf="start.invalid && (start.dirty || start.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="start.errors?.['required']">
+                                Start is requerido.
+                            </div>
+                            <div *ngIf="start.errors?.['min']">
+                                Start date can not be before than today.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputFinish" class="form-label">Finish</label>
+                        <input type="date" class="form-control" id="inputFinish" aria-describedby="finishHelp"
+                            [(ngModel)]="tournamentCreate.finish" #finish="ngModel" name="finish" required>
+
+                        <div *ngIf="finish.invalid && (finish.dirty || finish.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="finish.errors?.['required']">
+                                Finish is requerido.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary col-12 btn-update-team" (click)="createTournament()"
+                        [disabled]="createTournamentForm.invalid" data-bs-dismiss="modal">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal update tournament -->
+<div class="modal fade" id="updateTournamentModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form class="w-100" #updateTournamentForm="ngForm">
+                    <div class="mb-3">
+                        <h2>Update Tournament</h2>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp"
+                            [(ngModel)]="tournamentUpdate.name" #nameUpdate="ngModel" name="nameUpdate" required>
+
+                        <div *ngIf="nameUpdate.invalid && (nameUpdate.dirty || nameUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="nameUpdate.errors?.['required']">
+                                Name is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputNumber" class="form-label">Number</label>
+                        <input type="number" class="form-control" id="inputNumber" aria-describedby="numberHelp"
+                            [(ngModel)]="tournamentUpdate.number" #numberUpdate="ngModel" name="numberUpdate" required>
+
+                        <div *ngIf="numberUpdate.invalid && (numberUpdate.dirty || numberUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="numberUpdate.errors?.['required']">
+                                Number is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputStart" class="form-label">Start</label>
+                        <input type="date" class="form-control" id="inputStart" aria-describedby="startHelp"
+                            [(ngModel)]="tournamentUpdate.start" #startUpdate="ngModel" name="startUpdate" required
+                            min="{{date | date: 'yyyy-MM-dd'}}">
+
+                        <div *ngIf="startUpdate.invalid && (startUpdate.dirty || startUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="startUpdate.errors?.['required']">
+                                Start is required.
+                            </div>
+                            <div *ngIf="startUpdate.errors?.['min']">
+                                Start date can not be before than today.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputFinish" class="form-label">Finish</label>
+                        <input type="date" class="form-control" id="inputFinish" aria-describedby="finishHelp"
+                            [(ngModel)]="tournamentUpdate.finish" #finishUpdate="ngModel" name="finishUpdate" required>
+
+                        <div *ngIf="finishUpdate.invalid && (finishUpdate.dirty || finishUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="finishUpdate.errors?.['required']">
+                                Finish is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary col-12 btn-update-team" (click)="updateTournament()"
+                        [disabled]="updateTournamentForm.invalid" data-bs-dismiss="modal">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show tournament teams -->
+<div class="modal fade" id="showTournamentTeamsModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Teams</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Foundation</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="teamsSelected !== undefined">
+                        <tr *ngFor="let team of teamsSelected">
+                            <td>{{team.id}}</td>
+                            <td><img src="{{team.profile}}" class="img-profile" alt="..."></td>
+                            <td>{{team.name}}</td>
+                            <td>{{team.foundation}}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button
+                                        *ngIf="tournamentSelected !== undefined && tournamentSelected.id !== undefined && team.id !== undefined"
+                                        type="button" class="btn btn-outline-secondary"
+                                        (click)="deleteTournamentTeam(tournamentSelected.id, team.id)"><i
+                                            class="bi bi-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

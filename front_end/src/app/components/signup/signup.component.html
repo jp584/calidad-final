@@ -1,0 +1,103 @@
+<div class="container-fluid vh-100 vw-100 p-0">
+    <div class="row h-100 w-100 m-0">
+      <div class="col-8 p-0">
+        <div id="carouselExampleCaptions" class="carousel slide h-100" data-bs-ride="carousel">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+              aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+              aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+              aria-label="Slide 3"></button>
+          </div>
+          <div class="carousel-inner h-100">
+            <div class="carousel-item active h-100">
+              <img src="https://img.freepik.com/free-vector/dynamic-gradient-football-background_23-2149007789.jpg"
+                class="d-block w-100" style="object-fit: cover; height: 100%; filter: brightness(50%);" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Organizers</h5>
+                <p>Some representative placeholder content for the first slide.</p>
+              </div>
+            </div>
+            <div class="carousel-item h-100">
+              <img src="https://media.istockphoto.com/id/494827828/photo/soccer-assistant-referee.jpg?s=612x612&w=0&k=20&c=ZS8tuD8MPTbAgeGqU3HTunzuZWPWeYvocwXFfjFE7-k="
+                class="d-block w-100" style="object-fit: cover; height: 100%; filter: brightness(50%);" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Referees</h5>
+                <p>Some representative placeholder content for the second slide.</p>
+              </div>
+            </div>
+            <div class="carousel-item h-100">
+              <img src="https://d3rqy6w6tyyf68.cloudfront.net/AcuCustom/Sitename/DAM/041/Ryan-Davies1.jpg"
+                class="d-block w-100" style="object-fit: cover; height: 100%; filter: brightness(50%);" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Coaches</h5>
+                <p>Some representative placeholder content for the third slide.</p>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+      <div class="col-4 p-4 d-flex justify-content-center align-items-center">
+        <form class="w-100" #signupForm="ngForm">
+          <div class="mb-3">
+            <h2>Sign up</h2>
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputUsername1" class="form-label">Username</label>
+            <input type="text" class="form-control" id="exampleInputUsername1" aria-describedby="usernameHelp"
+              [(ngModel)]="signup.username" #username="ngModel" name="username" pattern="^.{3,}$" required>
+            <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-primary p-0">
+              <div *ngIf="username.errors?.['required']">
+                Username is required.
+              </div>
+              <div *ngIf="username.errors?.['pattern']">
+                Username pattern has to include: 3 characters
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+              [(ngModel)]="signup.email" #email="ngModel" name="email"
+              pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" required>
+            <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-primary p-0">
+              <div *ngIf="email.errors?.['required']">
+                Email is required.
+              </div>
+              <div *ngIf="email.errors?.['pattern']">
+                Email pattern does not match: example@email.com.
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" [(ngModel)]="signup.password"
+              #password="ngModel" name="password" required>
+            <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-primary p-0">
+              <div *ngIf="password.errors?.['required']">
+                Password is required.
+              </div>
+            </div>
+          </div>
+          <div *ngIf="loginFailed" class="alert alert-danger mt-2">
+            Incorrect password. <a href="#" (click)="forgotPassword()">Forgot your password?</a>
+          </div>
+          <div class="mb-3">
+            If you don't have an account <a routerLink="/signup">Sign Up</a>
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="signupForm.invalid" (click)="selectedSignUp()">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </div>

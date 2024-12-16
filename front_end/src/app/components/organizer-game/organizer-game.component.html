@@ -1,0 +1,247 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Game</a>
+        <div class="d-flex">
+
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="row">
+        <table class="table" id="tournamentTable">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Number</th>
+                    <th scope="col">Round</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">Finish</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="tournaments !== undefined">
+                <tr *ngFor="let tournament of tournaments">
+                    <td>{{tournament.id}}</td>
+                    <td>{{tournament.name}}</td>
+                    <td>{{tournament.number}}</td>
+                    <td>{{tournament.round}}</td>
+                    <td>{{tournament.start}}</td>
+                    <td>{{tournament.finish}}</td>
+                    <td>{{tournament.status ? "Active": "Deactive"}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#addGameModal" (click)="setTournamentSelected(tournament)"><i
+                                    class="bi bi-plus"></i></button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                (click)="showTournamentGames(tournament)"><i class="bi bi-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <table class="table" id="gameTable">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Profile A</th>
+                    <th scope="col">Team A</th>
+                    <th scope="col">Profile B</th>
+                    <th scope="col">Team B</th>
+                    <th scope="col">Referee</th>
+                    <th scope="col">Game Date</th>
+                    <th scope="col">Round</th>
+                    <th scope="col">Profile</th>
+                    <th scope="col">Winner</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="gamesSelected !== undefined">
+                <tr *ngFor="let game of gamesSelected">
+                    <td>{{game.id}}</td>
+                    <td><img src="{{getTeamProfile(game.tournamentTeamAId)}}" class="img-profile" alt="..."></td>
+                    <td>{{getTeamName(game.tournamentTeamAId)}}</td>
+                    <td><img src="{{getTeamProfile(game.tournamentTeamBId)}}" class="img-profile" alt="..."></td>
+                    <td>{{getTeamName(game.tournamentTeamBId)}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#readUserModal" (click)="setReadUser(game.userId)"><i
+                                    class="bi bi-search"></i></button>
+                        </div>
+                    </td>
+                    <td>{{game.gameDate}}</td>
+                    <td>{{game.round}}</td>
+                    <td><img src="{{getTeamProfile(game.tournamentTeamWinnerId)}}" class="img-profile" alt="..."></td>
+                    <td>{{getTeamName(game.tournamentTeamWinnerId)}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#showLocationModal" (click)="showLocation(game)"><i
+                                    class="bi bi-search"></i></button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button *ngIf="game.id !== undefined" type="button" class="btn btn-outline-secondary"
+                                (click)="deleteGame(game.id)"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal create game -->
+<div class="modal fade" id="addGameModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="w-100" #addGameForm="ngForm">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Game</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="inputRound" class="form-label">Round</label>
+                        <p>{{gameCreate.round}}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputTeamA" class="form-label">Team A</label>
+                        <select class="form-select" id="inputTeamA" aria-label="Default select example"
+                            [(ngModel)]="gameCreate.tournamentTeamAId" #tournamentTeamAId="ngModel"
+                            name="tournamentTeamAId" required>
+                            <option selected>Select Team</option>
+                            <option *ngFor="let tournamentTeam of tournamentTeamsSelected"
+                                value="{{tournamentTeam.id}}">{{getTeamName(tournamentTeam.id!)}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputTeamB" class="form-label">Team B</label>
+                        <select class="form-select" id="inputTeamB" aria-label="Default select example"
+                            [(ngModel)]="gameCreate.tournamentTeamBId" #tournamentTeamBId="ngModel"
+                            name="tournamentTeamBId" required>
+                            <option selected>Select Team</option>
+                            <option *ngFor="let tournamentTeam of tournamentTeamsSelected"
+                                value="{{tournamentTeam.id}}">{{getTeamName(tournamentTeam.id!)}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputReferee" class="form-label">Referee</label>
+                        <select class="form-select" id="inputReferee" aria-label="Default select example"
+                            [(ngModel)]="gameCreate.userId" #userId="ngModel" name="userId" required>
+                            <option selected>Select Referee</option>
+                            <option *ngFor="let user of users" value="{{user.id}}">{{user.username}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" *ngIf="tournamentSelected !== undefined">
+                        <label for="inputGameDate" class="form-label">Game Date</label>
+                        <input type="date" class="form-control" id="inputGameDate" aria-describedby="gameDateHelp"
+                            [(ngModel)]="gameCreate.gameDate" #gameDate="ngModel" name="gameDate" required
+                            min="{{tournamentSelected.start | date: 'yyyy-MM-dd'}}"
+                            max="{{tournamentSelected.finish | date: 'yyyy-MM-dd'}}">
+
+                        <div *ngIf="gameDate.invalid && (gameDate.dirty || gameDate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="gameDate.errors?.['required']">
+                                Game Date is requerido.
+                            </div>
+                            <div *ngIf="gameDate.errors?.['min']">
+                                Game Date can not be before than tournament start.
+                            </div>
+                            <div *ngIf="gameDate.errors?.['max']">
+                                Game Date can not be greater than tournament finish.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Game place</label>
+                        <google-map *ngIf="center !== undefined" width="100%" height="400" [center]="center"
+                            [options]="options" (mapClick)="click($event)">
+                            <map-marker *ngIf="center !== undefined" [position]="center"></map-marker>
+                            <map-marker *ngIf="place !== undefined" [position]="place"></map-marker>
+                        </google-map>
+
+                        <div *ngIf="place == undefined" class="alert alert-primary p-0">
+                            Place is required
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" [disabled]="addGameForm.invalid"
+                        data-bs-dismiss="modal" (click)="createGame()">Add</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show location -->
+<div class="modal fade" id="showLocationModal" tabindex="-1" aria-labelledby="readUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <google-map *ngIf="location !== undefined" width="100%" height="400" [center]="location"
+                        [options]="options">
+                        <map-marker *ngIf="center !== undefined" [position]="center"></map-marker>
+                        <map-marker *ngIf="location !== undefined" [position]="location"></map-marker>
+                    </google-map>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show user-->
+<div class="modal fade" id="readUserModal" tabindex="-1" aria-labelledby="readUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <ul *ngIf="user !== undefined" class="list-group list-group-flush">
+                        <li class="list-group-item">Username: {{user.username}}</li>
+                        <li class="list-group-item">Email: {{user.email}}</li>
+                        <li class="list-group-item">Status: {{user.status ? "Active" : "Deactive"}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

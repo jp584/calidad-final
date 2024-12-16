@@ -1,0 +1,551 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Goals and Events</a>
+        <div class="d-flex">
+
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Games</h5>
+                    <p class="card-text">Select one of the following games for today to set goals and events.</p>
+                </div>
+            </div>
+
+            <table class="table" id="gameTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Profile A</th>
+                        <th scope="col">Team A</th>
+                        <th scope="col">Profile B</th>
+                        <th scope="col">Team B</th>
+                        <th scope="col">Game Date</th>
+                        <th scope="col">Round</th>
+                        <th scope="col">Profile</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="gamesToday !== undefined">
+                    <tr *ngFor="let game of gamesToday">
+                        <td>{{game.id}}</td>
+                        <td><img src="{{getTeamProfile(game.tournamentTeamAId)}}" class="img-profile" alt="..."></td>
+                        <td>{{getTeamName(game.tournamentTeamAId)}}</td>
+                        <td><img src="{{getTeamProfile(game.tournamentTeamBId)}}" class="img-profile" alt="..."></td>
+                        <td>{{getTeamName(game.tournamentTeamBId)}}</td>
+
+                        <td>{{game.gameDate}}</td>
+                        <td>{{game.round}}</td>
+                        <td><img src="{{getTeamProfile(game.tournamentTeamWinnerId)}}" class="img-profile" alt="...">
+                        </td>
+                        <td>{{getTeamName(game.tournamentTeamWinnerId)}}</td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                    data-bs-target="#showLocationModal" (click)="showLocation(game)"><i
+                                        class="bi bi-search"></i></button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-outline-secondary" (click)="setGame(game)"><i
+                                        class="bi bi-search"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col">
+            <div class="card-group">
+
+                <div class="card mb-3" style="max-width: 540px;" *ngIf="teamA !== undefined">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{teamA.profile}}" class="img-profile-game" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{teamA.name}}</h5>
+                                <div class="d-grid gap-1"
+                                    *ngIf="gameCurrent !== undefined && gameCurrent.tournamentTeamWinnerId === null">
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#showPlayersTeamAModal">Goal</button>
+                                    <button class="btn btn-danger" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#showPlayersTeamARedCardModal">Red Card</button>
+                                    <button class="btn btn-warning" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#showPlayersTeamAYellowCardModal">Yellow Card</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3" style="max-width: 540px;" *ngIf="teamB !== undefined">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{teamB!.profile}}" class="img-profile-game" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{teamB.name}}</h5>
+                                <div class="d-grid gap-1"
+                                    *ngIf="gameCurrent !== undefined && gameCurrent.tournamentTeamWinnerId === null">
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#showPlayersTeamBModal">Goal</button>
+                                    <button class="btn btn-danger" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#showPlayersTeamBRedCardModal">Red Card</button>
+                                    <button class="btn btn-warning" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#showPlayersTeamBYellowCardModal">Yellow Card</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="alert alert-primary p-0" role="alert">
+                Goals
+            </div>
+            <table class="table" id="playerGoalTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Player Profile</th>
+                        <th scope="col">Player Name</th>
+                        <th scope="col">Team Profile</th>
+                        <th scope="col">Team Name</th>
+                        <th scope="col">Goals</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="goals !== undefined">
+                    <tr *ngFor="let goal of goals">
+                        <td>{{goal.id}}</td>
+                        <td><img src="{{getPlayerProfile(goal.playerId)}}" class="img-profile" alt="..."></td>
+                        <td>{{getPlayerName(goal.playerId)}}</td>
+                        <td><img src="{{getPlayerTeamProfile(goal.playerId)}}" class="img-profile" alt="..."></td>
+                        <td>{{getPlayerTeamName(goal.playerId)}}</td>
+                        <td>{{goal.goal}}</td>
+                        <td>{{goal.time}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-danger p-0" role="alert">
+                Red Cards
+            </div>
+            <table class="table" id="playerRedCardTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Player Profile</th>
+                        <th scope="col">Player Name</th>
+                        <th scope="col">Team Profile</th>
+                        <th scope="col">Team Name</th>
+                        <th scope="col">Red Cards</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="redCards !== undefined">
+                    <tr *ngFor="let redCard of redCards">
+                        <td>{{redCard.id}}</td>
+                        <td><img src="{{getPlayerProfile(redCard.playerId)}}" class="img-profile" alt="..."></td>
+                        <td>{{getPlayerName(redCard.playerId)}}</td>
+                        <td><img src="{{getPlayerTeamProfile(redCard.playerId)}}" class="img-profile" alt="..."></td>
+                        <td>{{getPlayerTeamName(redCard.playerId)}}</td>
+                        <td>{{redCard.redCard}}</td>
+                        <td>{{redCard.time}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-warning p-0" role="alert">
+                Yellow Cards
+            </div>
+            <table class="table" id="playerRedCardTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Player Profile</th>
+                        <th scope="col">Player Name</th>
+                        <th scope="col">Team Profile</th>
+                        <th scope="col">Team Name</th>
+                        <th scope="col">Yellow Cards</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="yellowCards !== undefined">
+                    <tr *ngFor="let yellowCard of yellowCards">
+                        <td>{{yellowCard.id}}</td>
+                        <td><img src="{{getPlayerProfile(yellowCard.playerId)}}" class="img-profile" alt="..."></td>
+                        <td>{{getPlayerName(yellowCard.playerId)}}</td>
+                        <td><img src="{{getPlayerTeamProfile(yellowCard.playerId)}}" class="img-profile" alt="..."></td>
+                        <td>{{getPlayerTeamName(yellowCard.playerId)}}</td>
+                        <td>{{yellowCard.yellowCard}}</td>
+                        <td>{{yellowCard.time}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="card" *ngIf="gameCurrent !== undefined && gameCurrent.tournamentTeamWinnerId === null">
+                <div class="card-body">
+                    <h5 class="card-title">Finish Game</h5>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                            data-bs-target="#finishGameModal" (click)="setGameWinner()">Finish Game</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show location -->
+<div class="modal fade" id="showLocationModal" tabindex="-1" aria-labelledby="readUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <google-map *ngIf="location !== undefined" width="100%" height="400" [center]="location">
+                        <map-marker *ngIf="location !== undefined" [position]="location"></map-marker>
+                    </google-map>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show players team a -->
+<div class="modal fade" id="showPlayersTeamAModal" tabindex="-1" aria-labelledby="readUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Ci</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="playersA !== undefined">
+                        <tr *ngFor="let player of playersA">
+                            <td>{{player.id}}</td>
+                            <td><img src="{{player.profile}}" class="img-profile" alt="..."></td>
+                            <td>{{player.name}}</td>
+                            <td>{{player.ci}}</td>
+                            <td *ngIf="player.status !== false">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button *ngIf="player.id !== undefined" type="button"
+                                        class="btn btn-outline-secondary" (click)="createGoalPlayer(player)"><i
+                                            class="bi bi-plus"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show players team b -->
+<div class="modal fade" id="showPlayersTeamBModal" tabindex="-1" aria-labelledby="readUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Ci</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="playersB !== undefined">
+                        <tr *ngFor="let player of playersB">
+                            <td>{{player.id}}</td>
+                            <td><img src="{{player.profile}}" class="img-profile" alt="..."></td>
+                            <td>{{player.name}}</td>
+                            <td>{{player.ci}}</td>
+                            <td *ngIf="player.status !== false">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button *ngIf="player.id !== undefined" type="button"
+                                        class="btn btn-outline-secondary" (click)="createGoalPlayer(player)"><i
+                                            class="bi bi-plus"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show players team a for red card -->
+<div class="modal fade" id="showPlayersTeamARedCardModal" tabindex="-1" aria-labelledby="readUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Ci</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="playersA !== undefined">
+                        <tr *ngFor="let player of playersA">
+                            <td>{{player.id}}</td>
+                            <td><img src="{{player.profile}}" class="img-profile" alt="..."></td>
+                            <td>{{player.name}}</td>
+                            <td>{{player.ci}}</td>
+                            <td *ngIf="player.status !== false">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button *ngIf="player.id !== undefined" type="button"
+                                        class="btn btn-outline-secondary" (click)="createRedCard(player)"><i
+                                            class="bi bi-plus"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show players team b for red card -->
+<div class="modal fade" id="showPlayersTeamBRedCardModal" tabindex="-1" aria-labelledby="readUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Ci</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="playersB !== undefined">
+                        <tr *ngFor="let player of playersB">
+                            <td>{{player.id}}</td>
+                            <td><img src="{{player.profile}}" class="img-profile" alt="..."></td>
+                            <td>{{player.name}}</td>
+                            <td>{{player.ci}}</td>
+                            <td *ngIf="player.status !== false">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button *ngIf="player.id !== undefined" type="button"
+                                        class="btn btn-outline-secondary" (click)="createRedCard(player)"><i
+                                            class="bi bi-plus"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show players team a for yellow card -->
+<div class="modal fade" id="showPlayersTeamAYellowCardModal" tabindex="-1" aria-labelledby="readUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Ci</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="playersA !== undefined">
+                        <tr *ngFor="let player of playersA">
+                            <td>{{player.id}}</td>
+                            <td><img src="{{player.profile}}" class="img-profile" alt="..."></td>
+                            <td>{{player.name}}</td>
+                            <td>{{player.ci}}</td>
+                            <td *ngIf="player.status !== false">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button *ngIf="player.id !== undefined" type="button"
+                                        class="btn btn-outline-secondary" (click)="createYellowCard(player)"><i
+                                            class="bi bi-plus"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal show players team b for yellow card -->
+<div class="modal fade" id="showPlayersTeamBYellowCardModal" tabindex="-1" aria-labelledby="readUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Ci</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="playersB !== undefined">
+                        <tr *ngFor="let player of playersB">
+                            <td>{{player.id}}</td>
+                            <td><img src="{{player.profile}}" class="img-profile" alt="..."></td>
+                            <td>{{player.name}}</td>
+                            <td>{{player.ci}}</td>
+                            <td *ngIf="player.status !== false">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button *ngIf="player.id !== undefined" type="button"
+                                        class="btn btn-outline-secondary" (click)="createYellowCard(player)"><i
+                                            class="bi bi-plus"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="finishGameModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Finish Game</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card-group">
+
+                    <div class="card mb-3" style="max-width: 540px;" *ngIf="teamA !== undefined">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{teamA.profile}}" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{teamA.name}}</h5>
+                                    <div class="d-grid gap-1">
+                                        <h5>{{goalsA}} goals</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3" style="max-width: 540px;" *ngIf="teamB !== undefined">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{teamB!.profile}}" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{teamB.name}}</h5>
+                                    <div class="d-grid gap-1">
+                                        <h5>{{goalsB}} goals</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button *ngIf="goalsA !== goalsB" type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                    (click)="saveGameWinner()">Save
+                    winner</button>
+            </div>
+        </div>
+    </div>
+</div>

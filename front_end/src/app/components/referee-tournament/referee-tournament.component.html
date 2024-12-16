@@ -1,0 +1,73 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Tournament</a>
+        <div class="d-flex">
+
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <table class="table table-hover" id="tournamentTable">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Start</th>
+                <th scope="col">Finish</th>
+                <th scope="col">State</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="tournaments !== undefined">
+            <tr *ngFor="let tournament of tournaments">
+                <td>{{tournament.id}}</td>
+                <td>{{tournament.name}}</td>
+                <td>{{tournament.start}}</td>
+                <td>{{tournament.finish}}</td>
+                <td>{{tournament.status ? "Active": "Inactive"}}</td>
+                <td>
+
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#showTournamentTeamsModal" (click)="showTournamentTeams(tournament)"><i
+                                class="bi bi-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal show tournament teams -->
+<div class="modal fade" id="showTournamentTeamsModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Teams</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Profile</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Foundation</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="teamsSelected !== undefined">
+                        <tr *ngFor="let team of teamsSelected">
+                            <td>{{team.id}}</td>
+                            <td><img src="{{team.profile}}" class="img-profile" alt="..."></td>
+                            <td>{{team.name}}</td>
+                            <td>{{team.foundation}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

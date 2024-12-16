@@ -1,0 +1,65 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Team</a>
+        <div class="d-flex">
+
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <table class="table" id="teamTable">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Profile</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Foundation</th>
+                    <th scope="col">User</th>
+                    <th scope="col">State</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="teams !== undefined">
+                <tr *ngFor="let team of teams">
+                    <td>{{team.id}}</td>
+                    <td><img src="{{team.profile}}" class="img-profile" alt="..."></td>
+                    <td>{{team.name}}</td>
+                    <td>{{team.foundation}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#readUserModal" (click)="setReadUser(team.userId)"><i
+                                    class="bi bi-search"></i></button>
+                        </div>
+                    </td>
+                    <td>{{team.status ? "Activo": "Desactivado"}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal show user -->
+<div class="modal fade" id="readUserModal" tabindex="-1" aria-labelledby="readUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readUserModalLabel">User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <ul *ngIf="user !== undefined" class="list-group list-group-flush">
+                        <li class="list-group-item">Username: {{user.username}}</li>
+                        <li class="list-group-item">Email: {{user.email}}</li>
+                        <li class="list-group-item">Status: {{user.status ? "Active" : "Deactive"}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

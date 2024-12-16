@@ -1,0 +1,220 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">User Controller</a>
+        <div class="d-flex">
+            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#createUserModal">Add
+                User</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <table class="table" id="userTable">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of users">
+                    <th scope="row">{{user.id}}</th>
+                    <td>{{user.username}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.roles[0].name}}</td>
+                    <td>{{user.status ? "Active" : "Deactive"}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#updateUserModal" (click)="setUpdateUser(user)"><i
+                                    class="bi bi-pencil"></i></button>
+                            <button type="button" class="btn btn-outline-secondary" (click)="deleteUser(user.id)"><i
+                                    class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal create user -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form class="w-100" #createUserForm="ngForm">
+                    <div class="mb-3">
+                        <h2>Sign up</h2>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="inputUsername" aria-describedby="usernameHelp"
+                            [(ngModel)]="signupCreate.username" #username="ngModel" name="username" pattern="^.{3,}$"
+                            required>
+
+                        <div *ngIf="username.invalid && (username.dirty || username.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="username.errors?.['required']">
+                                Username is required.
+                            </div>
+                            <div *ngIf="username.errors?.['pattern']">
+                                Username pattern has to include: 3 characters
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputEmail" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp"
+                            [(ngModel)]="signupCreate.email" #email="ngModel" name="email"
+                            pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" required>
+
+                        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="email.errors?.['required']">
+                                Email is required.
+                            </div>
+                            <div *ngIf="email.errors?.['pattern']">
+                                Email pattern does not match: example@email.com.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="inputPassword"
+                            [(ngModel)]="signupCreate.password" #password="ngModel" name="password"
+                            pattern="{{passwordSetting!.pattern}}" required>
+
+                        <div *ngIf="password.invalid && (password.dirty || password.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="password.errors?.['required']">
+                                Password is required.
+                            </div>
+                            <div *ngIf="password.errors?.['pattern']">
+                                Password pattern has to include: {{numberUppercase}} uppercase,
+                                {{numberLowercase}} lowercase, {{numberDigit}} digit, {{numberSpetial}} special !@#$&*,
+                                {{numberCharacter}} characters
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputRole" class="form-label">Role</label>
+                        <select class="form-select" aria-label="Default select example" id="inputRole"
+                            [(ngModel)]="signupCreate.role[0]" #role="ngModel" name="role" required>
+                            <option value="coach">Coach</option>
+                            <option value="referee">Referee</option>
+                            <option value="organizer">Organizer</option>
+                        </select>
+
+                        <div *ngIf="role.invalid && (role.dirty || role.touched)" class="alert alert-primary p-0">
+                            <div *ngIf="role.errors?.['required']">
+                                Role is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" (click)="createUser()"
+                        [disabled]="createUserForm.invalid" data-bs-dismiss="modal">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal update user -->
+<div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form class="w-100" #updateUserForm="ngForm">
+                    <div class="mb-3">
+                        <h2>Update</h2>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="inputUsername" aria-describedby="usernameHelp"
+                            [(ngModel)]="signupUpdate.username" #usernameUpdate="ngModel" name="usernameUpdate"
+                            pattern="^.{3,}$" required>
+
+                        <div *ngIf="usernameUpdate.invalid && (usernameUpdate.dirty || usernameUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="usernameUpdate.errors?.['required']">
+                                Username is required.
+                            </div>
+                            <div *ngIf="usernameUpdate.errors?.['pattern']">
+                                Username pattern has to include: 3 characters
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputEmail" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp"
+                            [(ngModel)]="signupUpdate.email" #emailUpdate="ngModel" name="emailUpdate"
+                            pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" required>
+
+                        <div *ngIf="emailUpdate.invalid && (emailUpdate.dirty || emailUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="emailUpdate.errors?.['required']">
+                                Email is required.
+                            </div>
+                            <div *ngIf="emailUpdate.errors?.['pattern']">
+                                Email pattern does not match: example@email.com.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="inputPassword"
+                            [(ngModel)]="signupUpdate.password" #passwordUpdate="ngModel" name="passwordUpdate"
+                            pattern="{{passwordSetting!.pattern}}" required>
+
+                        <div *ngIf="passwordUpdate.invalid && (passwordUpdate.dirty || passwordUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="passwordUpdate.errors?.['required']">
+                                Password is required.
+                            </div>
+                            <div *ngIf="passwordUpdate.errors?.['pattern']">
+                                Password pattern has to include: {{numberUppercase}} uppercase,
+                                {{numberLowercase}} lowercase, {{numberDigit}} digit, {{numberSpetial}} special !@#$&*,
+                                {{numberCharacter}} characters
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputRole" class="form-label">Role</label>
+                        <select class="form-select" aria-label="Default select example" id="inputRole"
+                            [(ngModel)]="signupUpdate.role[0]" #roleUpdate="ngModel" name="roleUpdate" required>
+                            <option value="coach">Coach</option>
+                            <option value="referee">Referee</option>
+                            <option value="organizer">Organizer</option>
+                        </select>
+
+                        <div *ngIf="roleUpdate.invalid && (roleUpdate.dirty || roleUpdate.touched)"
+                            class="alert alert-primary p-0">
+                            <div *ngIf="roleUpdate.errors?.['required']">
+                                Role is required.
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" (click)="updateUser()"
+                        [disabled]="updateUserForm.invalid" data-bs-dismiss="modal">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

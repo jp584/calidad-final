@@ -1,0 +1,48 @@
+<div class="container-fluid vh-100 vw-100 p-0">
+        <div class="row h-100 w-100 m-0">
+                <div class="col-2 p-0 side-menu">
+
+                        <div class="side-menu-logo">
+                                Game Validator
+                        </div>
+
+                        <div>
+                                <p class="side-menu-header">ORGANIZER DASHBOARD</p>
+                                <p class="side-menu-header">Username: {{username}}</p>
+
+                                <li class="side-menu-item"><a class="nav-link side-menu-link"
+                                                routerLink="organizertournament" routerLinkActive="active"><i
+                                                        class="bi bi-pencil"></i> Tournaments</a></li>
+                                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="organizerteam"
+                                                routerLinkActive="active"><i class="bi bi-filter-square"></i> Teams</a>
+                                </li>
+                                <li class="side-menu-item"><a class="nav-link side-menu-link"
+                                                routerLink="organizerplayer" routerLinkActive="active"><i
+                                                        class="bi bi-people"></i> Players</a></li>
+                                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="organizergame"
+                                                routerLinkActive="active"><i class="bi bi-calendar"></i> Games</a>
+                                </li>
+                                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="organizerdss"
+                                                routerLinkActive="active"><i class="bi bi-bar-chart"></i> Dss</a>
+                                </li>
+                                <li class="side-menu-item"><a class="nav-link side-menu-link" routerLink="organizeruser"
+                                                routerLinkActive="active"><i class="bi bi-person"></i> Users</a>
+                                </li>
+                                <li class="side-menu-item"><a class="nav-link side-menu-link"
+                                                routerLink="organizerpassword" routerLinkActive="active"><i
+                                                        class="bi bi-lock"></i> Passwords</a>
+                                </li>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                                <button type="button" class="btn" style="background-color: #2574a9; color: #ffffff;"
+                                        (click)="selectLogout()"><i class="bi bi-box-arrow-left"></i>
+                                        Logout</button>
+                        </div>
+
+                </div>
+                <div class="col-10 p-0">
+                        <router-outlet></router-outlet>
+                </div>
+        </div>
+</div>

@@ -1,0 +1,35 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Player</a>
+        <div class="d-flex">
+
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <table class="table" id="teamTable">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Profile</th>
+                <th scope="col">Name</th>
+                <th scope="col">Ci</th>
+                <th scope="col">Birthdate</th>
+                <th scope="col">Position id</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="players !== undefined">
+            <tr *ngFor="let player of players">
+                <td>{{player.id}}</td>
+                <td><img src="{{player.profile}}" class="img-profile" alt="..."></td>
+                <td>{{player.name}}</td>
+                <td>{{player.ci}}</td>
+                <td>{{player.birthdate}}</td>
+                <td>{{getPosition(player.positionId)}}</td>
+                <td>{{player.status ? "Active": "Suspended"}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
