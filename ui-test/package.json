@@ -1,0 +1,19 @@
+{
+  "name": "examenfinal",
+  "version": "1.0.0",
+  "description": "Proyecto de prueba con Playwright",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.2"
+  },
+  "dependencies": {
+    "examenfinal": "file:"
+  }
+}
